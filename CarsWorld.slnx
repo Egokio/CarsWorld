@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Элементы решения/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Cars.Core/Cars.Core.csproj" />
+  <Project Path="Cars.WpfApp/Cars.WpfApp.csproj" />
+</Solution>

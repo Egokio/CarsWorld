@@ -108,7 +108,13 @@
             </TabItem>
             <TabItem Header="Selected Car" Margin="1,-2,-4,0">
                 <Grid Background="#FFE5E5E5">
-                    <StackPanel>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="124*"/>
+                        <ColumnDefinition Width="8*"/>
+                        <ColumnDefinition Width="13*"/>
+                        <ColumnDefinition Width="697*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.ColumnSpan="4">
                         <TextBlock TextWrapping="Wrap" FontSize="20" FontWeight="Bold" Text="Selected Car"/>
                         <TextBlock x:Name="SelectedNameLabel" TextWrapping="Wrap" FontWeight="Bold" Text="Name:"/>
                         <TextBlock x:Name="SelectedNameValue" TextWrapping="Wrap"/>
@@ -127,12 +133,12 @@
                         <TextBlock x:Name="SelectedSirenLabel" TextWrapping="Wrap" Text="Siren On:" FontWeight="Bold"/>
                         <TextBlock x:Name="SelectedSirenValue" TextWrapping="Wrap"/>
                     </StackPanel>
-                    <Button x:Name="CrazyActionButton" Content="Crazy Action!" HorizontalAlignment="Left" Margin="10,292,0,0" VerticalAlignment="Top" Width="178" Click="Button_Click_2" Height="34" FontSize="16" FontWeight="Bold"/>
-                    <Button x:Name="RepairButton" Content="Repair" HorizontalAlignment="Left" Margin="10,393,0,0" VerticalAlignment="Top" Height="28" Width="178" FontWeight="Bold" Click="RepairButton_Click"/>
-                    <Button x:Name="RefuelButton" Content="Refuel" HorizontalAlignment="Left" Margin="10,360,0,0" VerticalAlignment="Top" Height="27" Width="178" FontWeight="Bold" Click="RefuelButton_Click"/>
-                    <TextBox x:Name="ActionAmountBox" HorizontalAlignment="Left" Margin="69,332,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <Button x:Name="CrazyActionButton" Content="Crazy Action!" HorizontalAlignment="Left" Margin="10,292,0,0" VerticalAlignment="Top" Width="178" Click="Button_Click_2" Height="34" FontSize="16" FontWeight="Bold" Grid.ColumnSpan="4"/>
+                    <Button x:Name="RepairButton" Content="Repair" HorizontalAlignment="Left" Margin="10,393,0,0" VerticalAlignment="Top" Height="28" Width="178" FontWeight="Bold" Click="RepairButton_Click" Grid.ColumnSpan="4"/>
+                    <Button x:Name="RefuelButton" Content="Refuel" HorizontalAlignment="Left" Margin="10,360,0,0" VerticalAlignment="Top" Height="27" Width="178" FontWeight="Bold" Click="RefuelButton_Click" Grid.ColumnSpan="4"/>
+                    <TextBox x:Name="ActionAmountBox" HorizontalAlignment="Center" Margin="0,332,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
                     <TextBlock HorizontalAlignment="Left" Margin="10,331,0,0" TextWrapping="Wrap" Text="Amount" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
-                    <Button x:Name="DriveButton" Content="Drive" HorizontalAlignment="Left" Margin="421,316,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
+                    <Button x:Name="DriveButton" Content="Drive" HorizontalAlignment="Left" Margin="10,426,0,0" VerticalAlignment="Top" Click="Button_Click_1" Height="30" Width="178" FontWeight="Bold" Grid.ColumnSpan="4"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Log" Margin="4,-2,-9,0">

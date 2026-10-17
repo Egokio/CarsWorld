@@ -2,6 +2,17 @@
 
 public abstract class Car
 {
+
+    public event EventHandler<CarEventArgs>? Greeted;
+
+    public event EventHandler<CarEventArgs>? Farewell;
+
+    public event EventHandler<CarEventArgs>? CrazyActionPerformed;
+
+    public int ReactionCount { get; private set; }
+
+    public event EventHandler<CarEventArgs>? Reacted;
+
     public string Name { get; }
     public string Model { get; }
 
@@ -46,4 +57,30 @@ public abstract class Car
     }
 
     public abstract ActionResult CrazyAction();
+
+
+    public void NotifyGreeted(Car other)
+    {
+        Greeted?.Invoke(this, new CarEventArgs(other));
+    }
+
+    public void NotifyFarewell(Car other)
+    {
+        Farewell?.Invoke(this, new CarEventArgs(other));
+    }
+
+    protected void NotifyCrazyAction()
+    {
+        CrazyActionPerformed?.Invoke(this, new CarEventArgs(this));
+    }
+
+    public void ReactTo(Car other)
+    {
+
+        ArgumentNullException.ThrowIfNull(other);
+
+        ReactionCount++;
+        Reacted?.Invoke(this, new CarEventArgs(other));
+    }
+
 }

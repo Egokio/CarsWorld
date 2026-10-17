@@ -34,6 +34,8 @@ public class RaceCar : Car, IRefuelable
     {
         TurboLevel = Math.Min(100, TurboLevel + 20);
 
+        NotifyCrazyAction();
+
         return new ActionResult(true, "RaceCarTurbo", TurboLevel);
     }
 

@@ -30,6 +30,9 @@ public class PoliceCar : Car, IRefuelable, IRepairable
         SirenOn = !SirenOn;
 
         string messageKey = SirenOn ? "PoliceSirenOn" : "PoliceSirenOff";
+
+        NotifyCrazyAction();
+
         return new ActionResult(true, messageKey);
 
     }

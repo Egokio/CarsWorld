@@ -32,6 +32,9 @@ public class TowTruck : Car, IRepairable
 
     public override ActionResult CrazyAction()
     {
+
+        NotifyCrazyAction();
+
         return new ActionResult(true, "TowTruckRescue");
     }
 

@@ -24,6 +24,8 @@ public class MainViewModel : INotifyPropertyChanged
     private string newTurboLevel = "";
     private string newTowCapacity = "";
     private string newSirenOn = "False";
+    private string newWaterLevel = "";
+    private string newFarePerKm = "";
 
 
     public string NewCarName
@@ -114,10 +116,35 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    public string NewWaterLevel
+    {
+        get => newWaterLevel;
+        set
+        {
+            newWaterLevel = value;
+            OnPropertyChanged();
+            AddCarCommand?.RaiseCanExecuteChanged();
+        }
+    }
+
+    public string NewFarePerKm
+    {
+        get => newFarePerKm;
+        set
+        {
+            newFarePerKm = value;
+            OnPropertyChanged();
+            AddCarCommand?.RaiseCanExecuteChanged();
+        }
+    }
+
 
     private readonly Repository<RaceCar> raceCars = new();
     private readonly Repository<TowTruck> towTrucks = new();
     private readonly Repository<PoliceCar> policeCars = new();
+    private readonly Repository<Ambulance> ambulances = new();
+    private readonly Repository<FireTruck> fireTrucks = new();
+    private readonly Repository<Taxi> taxis = new();
 
     public RelayCommand AddCarCommand { get; }
     public RelayCommand RemoveCarCommand { get; }
@@ -164,6 +191,9 @@ public class MainViewModel : INotifyPropertyChanged
         SubscribeToRepository(raceCars);
         SubscribeToRepository(towTrucks);
         SubscribeToRepository(policeCars);
+        SubscribeToRepository(ambulances);
+        SubscribeToRepository(fireTrucks);
+        SubscribeToRepository(taxis);
     }
 
 
@@ -239,7 +269,10 @@ public class MainViewModel : INotifyPropertyChanged
     {
         "Race Car",
         "Tow Truck",
-        "Police Car"
+        "Police Car",
+        "Ambulance",
+        "Fire Truck",
+        "Taxi"
     };
 
     public string SelectedRepository
@@ -274,6 +307,9 @@ public class MainViewModel : INotifyPropertyChanged
             "Race Car" => raceCars.GetAll(),
             "Tow Truck" => towTrucks.GetAll(),
             "Police Car" => policeCars.GetAll(),
+            "Ambulance" => ambulances.GetAll(),
+            "Fire Truck" => fireTrucks.GetAll(),
+            "Taxi" => taxis.GetAll(),
             _ => Enumerable.Empty<Car>()
         };
     }
@@ -347,7 +383,10 @@ public class MainViewModel : INotifyPropertyChanged
         IEnumerable<Car> allCars = raceCars.GetAll()
             .Cast<Car>()
             .Concat(towTrucks.GetAll())
-            .Concat(policeCars.GetAll());
+            .Concat(policeCars.GetAll())
+            .Concat(ambulances.GetAll())
+            .Concat(fireTrucks.GetAll())
+            .Concat(taxis.GetAll());
 
         var groups = allCars
             .GroupBy(car => car.GetType().Name)
@@ -442,6 +481,35 @@ public class MainViewModel : INotifyPropertyChanged
                     name, model, speed, fuel, condition, sirenOn);
                 break;
 
+            case "Ambulance":
+                car = new Ambulance(
+                    name, model, speed, fuel, condition);
+                break;
+
+            case "Fire Truck":
+                if (!int.TryParse(NewWaterLevel, out int waterLevel) ||
+                    waterLevel < 0 || waterLevel > 100)
+                {
+                    Log.Add("Water level must be between 0 and 100.");
+                    return;
+                }
+
+                car = new FireTruck(
+                    name, model, speed, fuel, condition, waterLevel);
+                break;
+
+            case "Taxi":
+                if (!int.TryParse(NewFarePerKm, out int farePerKm) ||
+                    farePerKm <= 0)
+                {
+                    Log.Add("Fare per km must be greater than 0.");
+                    return;
+                }
+
+                car = new Taxi(
+                    name, model, speed, fuel, condition, farePerKm);
+                break;
+
             default:
                 Log.Add("Select a valid car type.");
                 return;
@@ -462,6 +530,18 @@ public class MainViewModel : INotifyPropertyChanged
 
             case PoliceCar policeCar:
                 policeCars.Add(policeCar);
+                break;
+
+            case Ambulance ambulance:
+                ambulances.Add(ambulance);
+                break;
+
+            case FireTruck fireTruck:
+                fireTrucks.Add(fireTruck);
+                break;
+
+            case Taxi taxi:
+                taxis.Add(taxi);
                 break;
         }
 
@@ -503,6 +583,14 @@ public class MainViewModel : INotifyPropertyChanged
             case "Police Car":
                 NewSirenOn = "False";
                 break;
+
+            case "Fire Truck":
+                NewWaterLevel = "";
+                break;
+
+            case "Taxi":
+                NewFarePerKm = "";
+                break;
         }
     }
 
@@ -536,6 +624,18 @@ public class MainViewModel : INotifyPropertyChanged
 
             case PoliceCar policeCar:
                 removed = policeCars.Remove(policeCar);
+                break;
+
+            case Ambulance ambulance:
+                removed = ambulances.Remove(ambulance);
+                break;
+
+            case FireTruck fireTruck:
+                removed = fireTrucks.Remove(fireTruck);
+                break;
+
+            case Taxi taxi:
+                removed = taxis.Remove(taxi);
                 break;
         }
 

@@ -302,5 +302,41 @@ namespace Cars.WpfApp.Properties {
                 return ResourceManager.GetString("TowTruckRescue", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to rushed a patient to the hospital with the siren wailing! Patients transported: {0}..
+        /// </summary>
+        internal static string AmbulanceEmergencyRun {
+            get {
+                return ResourceManager.GetString("AmbulanceEmergencyRun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to sprayed water on the fire! Water level is now {0}%..
+        /// </summary>
+        internal static string FireTruckSpray {
+            get {
+                return ResourceManager.GetString("FireTruckSpray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ran low on water and refilled at the hydrant! Water level is now {0}%..
+        /// </summary>
+        internal static string FireTruckRefill {
+            get {
+                return ResourceManager.GetString("FireTruckRefill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to took a passenger on a wild ride! Rides: {0}, earnings: {1}..
+        /// </summary>
+        internal static string TaxiWildRide {
+            get {
+                return ResourceManager.GetString("TaxiWildRide", resourceCulture);
+            }
+        }
     }
 }

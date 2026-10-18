@@ -27,6 +27,8 @@ public class Ambulance : Car, IRefuelable
     {
         PatientsTransported++;
 
+        NotifyCrazyAction();
+
         return new ActionResult(true, "AmbulanceEmergencyRun", PatientsTransported);
     }
 

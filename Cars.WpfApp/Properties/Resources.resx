@@ -198,4 +198,16 @@
   <data name="InvalidModel" xml:space="preserve">
     <value>Please enter a valid car model.</value>
   </data>
+  <data name="AmbulanceEmergencyRun" xml:space="preserve">
+    <value>rushed a patient to the hospital with the siren wailing! Patients transported: {0}.</value>
+  </data>
+  <data name="FireTruckSpray" xml:space="preserve">
+    <value>sprayed water on the fire! Water level is now {0}%.</value>
+  </data>
+  <data name="FireTruckRefill" xml:space="preserve">
+    <value>ran low on water and refilled at the hydrant! Water level is now {0}%.</value>
+  </data>
+  <data name="TaxiWildRide" xml:space="preserve">
+    <value>took a passenger on a wild ride! Rides: {0}, earnings: {1}.</value>
+  </data>
 </root>

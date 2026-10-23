@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Cars.Core;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Cars.WpfApp.ViewModels;
 
@@ -26,6 +27,58 @@ public class MainViewModel : INotifyPropertyChanged
     private string newSirenOn = "False";
 
 
+    private readonly SimulationRunner simulationRunner = new();
+    private CancellationTokenSource? simulationCancellation;
+    private string simulationReportText = "";
+    private bool isSimulationRunning;
+
+
+    private int simulationWorkload = 3;
+
+    public int SimulationWorkload
+    {
+        get => simulationWorkload;
+        set
+        {
+            if (simulationWorkload == value)
+                return;
+
+            simulationWorkload = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public RelayCommand RunSequentialCommand { get; }
+    public RelayCommand RunParallelCommand { get; }
+    public RelayCommand CancelSimulationCommand { get; }
+
+    public string SimulationReportText
+    {
+        get => simulationReportText;
+        set
+        {
+            simulationReportText = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool IsSimulationRunning
+    {
+        get => isSimulationRunning;
+        set
+        {
+            if (isSimulationRunning == value)
+                return;
+
+            isSimulationRunning = value;
+            OnPropertyChanged();
+
+            RunSequentialCommand?.RaiseCanExecuteChanged();
+            RunParallelCommand?.RaiseCanExecuteChanged();
+            CancelSimulationCommand?.RaiseCanExecuteChanged();
+        }
+    }
+
     public string NewCarName
     {
         get => newCarName;
@@ -33,6 +86,7 @@ public class MainViewModel : INotifyPropertyChanged
         {
             newCarName = value;
             OnPropertyChanged();
+            AddCarCommand?.RaiseCanExecuteChanged();
             AddCarCommand?.RaiseCanExecuteChanged();
         }
     }
@@ -154,6 +208,18 @@ public class MainViewModel : INotifyPropertyChanged
             _ => SelectedCar != null);
 
 
+        RunSequentialCommand = new RelayCommand(
+    _ => _ = RunSimulationAsync(false),
+    _ => !IsSimulationRunning);
+
+        RunParallelCommand = new RelayCommand(
+            _ => _ = RunSimulationAsync(true),
+            _ => !IsSimulationRunning);
+
+        CancelSimulationCommand = new RelayCommand(
+            _ => simulationCancellation?.Cancel(),
+            _ => IsSimulationRunning);
+
         Log.CollectionChanged += (s, e) =>
         {
             OnPropertyChanged(nameof(LogText));
@@ -209,6 +275,11 @@ public class MainViewModel : INotifyPropertyChanged
 
 
     public ObservableCollection<Car> Cars { get; } = new();
+
+    public ObservableCollection<Car> AllCars { get; } = new();
+
+    // Stores cars selected for CPU simulation.
+    public ObservableCollection<Car> SelectedCarsForSimulation { get; } = new();
 
     public ObservableCollection<IGrouping<string, Car>> CarsByType { get; } = new();
 
@@ -338,7 +409,24 @@ public class MainViewModel : INotifyPropertyChanged
 
         SelectedCar = null;
         RefreshGroups();
+        RefreshAllCars();
     }
+
+    private void RefreshAllCars()
+    {
+        AllCars.Clear();
+
+        foreach (Car car in raceCars.GetAll()
+                     .Cast<Car>()
+                     .Concat(towTrucks.GetAll())
+                     .Concat(policeCars.GetAll()))
+        {
+            AllCars.Add(car);
+        }
+
+        OnPropertyChanged(nameof(AllCars));
+    }
+
 
     private void RefreshGroups()
     {
@@ -565,5 +653,67 @@ public class MainViewModel : INotifyPropertyChanged
         PropertyChanged?.Invoke(
             this,
             new PropertyChangedEventArgs(propertyName));
+    }
+
+    private async Task RunSimulationAsync(bool parallel)
+    {
+        if (IsSimulationRunning)
+            return;
+
+        if (SelectedCarsForSimulation.Count < 3)
+        {
+            SimulationReportText = "Please select at least three cars.";
+            return;
+        }
+
+        IsSimulationRunning = true;
+        simulationCancellation = new CancellationTokenSource();
+
+        try
+        {
+            var snapshots = SelectedCarsForSimulation
+                .Select(CarSnapshot.FromCar)
+                .ToArray();
+
+            SimulationReport report;
+
+            if (parallel)
+            {
+                report = await simulationRunner.RunParallelAsync(
+                    snapshots,
+                    SimulationWorkload,
+                    simulationCancellation.Token);
+            }
+            else
+            {
+                report = await simulationRunner.RunSequentialAsync(
+                    snapshots,
+                    SimulationWorkload,
+                    simulationCancellation.Token);
+            }
+
+            SimulationReportText =
+                $"{(parallel ? "Parallel" : "Sequential")} simulation" +
+                Environment.NewLine +
+                string.Join(
+                    Environment.NewLine,
+                    report.Results.Select(result =>
+                        $"{result.CarName}: {result.Status} | " +
+                        $"Result: {result.Result?.ToString() ?? "-"} | " +
+                        $"Error: {result.ErrorMessage ?? "-"} | " +
+                        $"Duration: {result.Duration.TotalMilliseconds:F2} ms")) +
+                Environment.NewLine +
+                $"Total duration: {report.TotalDuration.TotalMilliseconds:F2} ms";
+        }
+        catch (Exception ex)
+        {
+            SimulationReportText = $"Simulation failed: {ex.Message}";
+        }
+        finally
+        {
+            simulationCancellation.Dispose();
+            simulationCancellation = null;
+            IsSimulationRunning = false;
+        }
     }
 }

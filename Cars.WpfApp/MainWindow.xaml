@@ -294,7 +294,7 @@
         Grid.ColumnSpan="4"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Log" Margin="4,-2,-9,0">
+            <TabItem Header="Log" Margin="5,-3,-10,1">
                 <Grid Background="#FFE5E5E5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="50"/>
@@ -316,6 +316,84 @@
                              Text="{Binding LogText, Mode=OneWay}"/>            
                 </Grid>
             </TabItem>
+
+            <TabItem Header="Simulation" Margin="10,-3,-13,1">
+                <Grid Background="#FFF3F5F8" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="5">
+                        <TextBlock Text="Car Simulation"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Margin="0,0,0,8"/>
+
+                        <TextBlock Text="Select at least three cars and choose the workload."
+                       Margin="0,0,0,8"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="Workload:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"/>
+
+                            <ComboBox x:Name="SimulationWorkloadBox"
+                                        Width="120"
+                                        SelectedValue="{Binding SimulationWorkload, Mode=TwoWay}"
+                                        SelectedValuePath="Content">
+                                <ComboBoxItem Content="1"/>
+                                <ComboBoxItem Content="3"/>
+                                <ComboBoxItem Content="5"/>
+                                <ComboBoxItem Content="10"/>
+                                <ComboBoxItem Content="30"/>
+                                <ComboBoxItem Content="100"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <ListBox x:Name="SimulationCarsList"
+         Grid.Row="1"
+         Margin="5"
+         SelectionMode="Extended"
+         DisplayMemberPath="Name"
+         SelectionChanged="SimulationCarsList_SelectionChanged"/>
+
+                    <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    Margin="5">
+                        <Button x:Name="RunSequentialButton"
+                    Content="Run Sequential"
+                    Command="{Binding RunSequentialCommand}"
+                    Padding="10,6"
+                    Margin="0,0,8,0"/>
+                    
+
+                        <Button x:Name="RunParallelButton"
+                    Content="Run Parallel"
+                                Command="{Binding RunParallelCommand}"
+                    Padding="10,6"
+                    Margin="0,0,8,0"/>
+
+                        <Button x:Name="CancelSimulationButton"
+                    Content="Cancel"
+                    Command="{Binding CancelSimulationCommand}"
+                    Padding="10,6"/>
+                    </StackPanel>
+
+                    <TextBox x:Name="SimulationReportBox"
+                 Grid.Row="3"
+                 Margin="5"
+                 IsReadOnly="True"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"
+                 Text="{Binding SimulationReportText, Mode=OneWay}"
+                 VerticalScrollBarVisibility="Auto"/>
+                </Grid>
+            </TabItem>
+
         </TabControl>
     </Grid>
 

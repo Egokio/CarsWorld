@@ -55,7 +55,10 @@ public partial class MainWindow : Window
         {
             "Race Car",
             "Tow Truck",
-            "Police Car"
+            "Police Car",
+            "Ambulance",
+            "Fire Truck",
+            "Taxi"
         };
 
         // Sets the initial repository selection.
@@ -172,6 +175,22 @@ SelectionChangedEventArgs e)
 
             "PoliceSirenOff" => $"{selectedCar.Name} {Properties.Resources.PoliceSirenOff}",
 
+            "AmbulanceEmergencyRun" => string.Format(
+                Properties.Resources.AmbulanceEmergencyRun,
+                result.Parameters),
+
+            "FireTruckSpray" => string.Format(
+                Properties.Resources.FireTruckSpray,
+                result.Parameters),
+
+            "FireTruckRefill" => string.Format(
+                Properties.Resources.FireTruckRefill,
+                result.Parameters),
+
+            "TaxiWildRide" => string.Format(
+                Properties.Resources.TaxiWildRide,
+                result.Parameters),
+
             _ => result.MessageKey
         };
 
@@ -212,6 +231,22 @@ SelectionChangedEventArgs e)
         {
             SelectedSirenValue.Text = "N/A";
         }
+
+        SelectedPatientsValue.Text = selectedCar is Ambulance ambulance
+            ? ambulance.PatientsTransported.ToString()
+            : "N/A";
+
+        SelectedWaterLevelValue.Text = selectedCar is FireTruck fireTruck
+            ? $"{fireTruck.WaterLevel}%"
+            : "N/A";
+
+        SelectedFareValue.Text = selectedCar is Taxi taxi
+            ? $"{taxi.FarePerKm} per km"
+            : "N/A";
+
+        SelectedRidesValue.Text = selectedCar is Taxi taxiRides
+            ? $"{taxiRides.RidesCompleted} rides, {taxiRides.Earnings} earned"
+            : "N/A";
     }
 
     private void RefuelButton_Click(object sender, RoutedEventArgs e)

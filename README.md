@@ -243,4 +243,3 @@ All generated code was checked manually, tested in Visual Studio and adjusted wh
 2. Make sure `Cars.WpfApp` is set as the startup project.
 3. Build the solution.
 4. Run the application.
-5. Add cars, test their actions, and run simulations using the simulation section.

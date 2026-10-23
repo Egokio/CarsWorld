@@ -19,7 +19,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="42"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="174"/>
+                        <RowDefinition Height="228"/>
                         <RowDefinition Height="48"/>
                     </Grid.RowDefinitions>
 
@@ -133,6 +133,7 @@
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
                             <!-- Name -->
@@ -213,6 +214,24 @@
                               Height="28"
                               SelectedValue="{Binding NewSirenOn, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
+
+                            <!-- Water level (Fire Truck) -->
+                            <StackPanel Grid.Row="3" Grid.Column="0" Margin="4">
+                                <Label Content="Water level" FontWeight="Bold" Padding="0,0,0,2"/>
+                                <TextBox x:Name="WaterLevelBox"
+                             Height="28"
+                             Padding="5,3"
+                             Text="{Binding NewWaterLevel, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <!-- Fare per km (Taxi) -->
+                            <StackPanel Grid.Row="3" Grid.Column="1" Margin="4">
+                                <Label Content="Fare per km" FontWeight="Bold" Padding="0,0,0,2"/>
+                                <TextBox x:Name="FarePerKmBox"
+                             Height="28"
+                             Padding="5,3"
+                             Text="{Binding NewFarePerKm, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
 
@@ -276,6 +295,17 @@
                         <TextBlock x:Name="SelectedTowCapacityValue" TextWrapping="Wrap"/>
                         <TextBlock x:Name="SelectedSirenLabel" TextWrapping="Wrap" Text="Siren On:" FontWeight="Bold"/>
                         <TextBlock x:Name="SelectedSirenValue" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" Margin="120,0,0,0">
+                        <TextBlock TextWrapping="Wrap" FontSize="20" FontWeight="Bold" Text="Type Details"/>
+                        <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="Patients Transported:"/>
+                        <TextBlock x:Name="SelectedPatientsValue" TextWrapping="Wrap"/>
+                        <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="Water Level:"/>
+                        <TextBlock x:Name="SelectedWaterLevelValue" TextWrapping="Wrap"/>
+                        <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="Fare:"/>
+                        <TextBlock x:Name="SelectedFareValue" TextWrapping="Wrap"/>
+                        <TextBlock TextWrapping="Wrap" FontWeight="Bold" Text="Taxi Rides:"/>
+                        <TextBlock x:Name="SelectedRidesValue" TextWrapping="Wrap"/>
                     </StackPanel>
                     <Button x:Name="CrazyActionButton" Content="Crazy Action!" HorizontalAlignment="Left" Margin="10,292,0,0" VerticalAlignment="Top" Width="178" Click="Button_Click_2" Height="34" FontSize="16" FontWeight="Bold" Grid.ColumnSpan="4"/>
                     <Button x:Name="RepairButton" Content="Repair" HorizontalAlignment="Left" Margin="10,393,0,0" VerticalAlignment="Top" Height="28" Width="178" FontWeight="Bold" Click="RepairButton_Click" Grid.ColumnSpan="4"/>

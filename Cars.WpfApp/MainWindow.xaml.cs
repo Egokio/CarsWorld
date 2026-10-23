@@ -11,12 +11,16 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using Cars.Core;
 using Cars.WpfApp.ViewModels;
-
+using System.Linq;
+using Cars.Core;
+using Cars.WpfApp.ViewModels;
 
 namespace Cars.WpfApp;
 
 public partial class MainWindow : Window
 {
+
+
 
     public MainWindow()
     {
@@ -43,6 +47,9 @@ public partial class MainWindow : Window
         };
 
         CarsGrid.ItemsSource = ((MainViewModel)DataContext).Cars;
+
+
+        SimulationCarsList.ItemsSource = ((MainViewModel)DataContext).AllCars;
 
         CarTypeBox.ItemsSource = new[]
         {
@@ -71,10 +78,26 @@ public partial class MainWindow : Window
             LogTextBox.Text = string.Join(
                 Environment.NewLine,
                 ((MainViewModel)DataContext).Log);
+        
+
         };
 
     }
 
+    private void SimulationCarsList_SelectionChanged(
+object sender,
+SelectionChangedEventArgs e)
+    {
+        if (DataContext is not MainViewModel viewModel)
+            return;
+
+        viewModel.SelectedCarsForSimulation.Clear();
+
+        foreach (Car car in SimulationCarsList.SelectedItems.Cast<Car>())
+        {
+            viewModel.SelectedCarsForSimulation.Add(car);
+        }
+    }
 
 
         private void CarTypeBox_SelectionChanged(
@@ -333,6 +356,11 @@ public partial class MainWindow : Window
             Environment.NewLine);
 
         LogTextBox.ScrollToEnd();
+    }
+
+    private void SimulationWorkloadBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+
     }
 }
 

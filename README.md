@@ -173,6 +173,58 @@ The project demonstrates:
 - Validation
 - Separation of Core and UI responsibilities
 
+
+## Simulation (Vol.3)
+
+The application includes CPU-intensive simulations for selected cars.
+
+### Simulation Features
+
+- Select at least three cars for a simulation.
+- Run calculations sequentially or in parallel.
+- Use immutable `CarSnapshot` records as simulation inputs.
+- Configure the simulation workload.
+- Measure the duration of each calculation and the total execution time.
+- Cancel running calculations using `CancellationToken`.
+- Handle errors independently for each car.
+- Display each car's status, result or error message, and execution duration.
+
+### Sequential and Parallel Execution
+
+**Sequential mode** processes one car at a time. Each calculation finishes before the next one begins.
+
+**Parallel mode** starts separate tasks for the selected cars and waits for all calculations to finish using `Task.WhenAll`.
+
+Both modes use `Stopwatch` to measure the total execution time.
+
+### Cancellation and Error Handling
+
+The simulation checks the cancellation token regularly during CPU-intensive calculations.
+
+Each car's calculation is handled independently. If one calculation fails, its error is included in the report while other calculations can continue.
+
+The report identifies each calculation as `Success`, `Error`, or `Cancelled`, where applicable.
+
+### Simulation Report
+
+The report includes:
+
+- Execution mode
+- Car name and status
+- Calculation result, when successful
+- Error or cancellation message, when applicable
+- Individual calculation duration
+- Total simulation duration
+
+### Running a Simulation
+
+1. Select at least three cars in the simulation section.
+2. Choose a workload.
+3. Click **Run Sequential** or **Run Parallel**.
+4. Review the simulation report.
+5. Click **Cancel** to request cancellation during a running simulation.
+
+
 ## AI Usage
 
 AI assistance was used during development to help with:
@@ -191,24 +243,3 @@ All generated code was checked manually, tested in Visual Studio and adjusted wh
 2. Make sure `Cars.WpfApp` is set as the startup project.
 3. Build the solution.
 4. Run the application.
-5. Add cars and test their actions.
-
-## Collaboration and New Character Types
-
-### Main Author
-The main author developed the original Cars World 2 application, including the Core logic, repositories, event system, MVVM architecture, and WPF user interface.
-
-### Second Student's Contribution
-The second student extended the existing application by adding three new character types:
-
-- **Ambulance** — represents an emergency vehicle with its own driving and crazy-action behavior.
-- **FireTruck** — represents a fire engine with distinct driving and crazy-action behavior.
-- **Taxi** — represents a passenger transport vehicle with distinct driving and crazy-action behavior.
-
-The new types are intended to work with the existing repository, event, and MVVM systems.
-
-### Code Review and Testing
-The main author reviews the contribution through a GitHub Pull Request, builds the solution, and tests the new character types and their integration before approving and merging the changes.
-
-### Git Workflow
-The second student develops the contribution in a separate branch and submits a Pull Request targeting `feature/cars-world-2`. The main author reviews the changes before merging them.

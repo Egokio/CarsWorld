@@ -24,6 +24,33 @@ public class Repository<T> : IRepository<T> where T : Car
         Subscribe(item);
     }
 
+    // Restores an existing car without triggering greeting or reaction events.
+    public void Restore(T item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        // Prevents adding the same car ID more than once.
+        if (items.Any(existing => existing.Id == item.Id))
+            throw new InvalidOperationException(
+                "A car with this ID already exists in the repository.");
+
+        // Adds the restored car and reconnects its event subscription.
+        items.Add(item);
+        Subscribe(item);
+    }
+
+    // Removes all cars and disconnects their event subscriptions.
+    public void Clear()
+    {
+        // Unsubscribes every car before removing it.
+        foreach (T item in items)
+        {
+            Unsubscribe(item);
+        }
+
+        items.Clear();
+    }
+
     public bool Remove(T item)
     {
         if (!items.Remove(item))

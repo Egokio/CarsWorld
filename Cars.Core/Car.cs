@@ -15,13 +15,16 @@ public abstract class Car
 
     public string Name { get; }
     public string Model { get; }
+    public Guid Id { get; }
 
     public int Speed { get; private set; }
     public int Fuel { get; private set; }
     public int Condition { get; private set; }
 
-    protected Car(string name, string model, int speed, int fuel, int condition)
+    protected Car(string name, string model, int speed, int fuel, int condition, Guid? id = null)
     {
+        Id = id ?? Guid.NewGuid();
+
         Name = name;
         Model = model;
         Speed = speed;
@@ -81,6 +84,31 @@ public abstract class Car
 
         ReactionCount++;
         Reacted?.Invoke(this, new CarEventArgs(other));
+    }
+
+
+    public void RestoreState(
+    int speed,
+    int fuel,
+    int condition,
+    int reactionCount)
+    {
+        if (speed < 0)
+            throw new ArgumentException("Speed cannot be negative.");
+
+        if (fuel < 0 || fuel > 100)
+            throw new ArgumentException("Fuel must be between 0 and 100.");
+
+        if (condition < 0 || condition > 100)
+            throw new ArgumentException("Condition must be between 0 and 100.");
+
+        if (reactionCount < 0)
+            throw new ArgumentException("Reaction count cannot be negative.");
+
+        Speed = speed;
+        Fuel = fuel;
+        Condition = condition;
+        ReactionCount = reactionCount;
     }
 
 }

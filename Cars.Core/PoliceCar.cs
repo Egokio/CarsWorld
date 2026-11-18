@@ -8,14 +8,9 @@ public class PoliceCar : Car, IRefuelable, IRepairable
 {
     public bool SirenOn { get; private set; }
 
-    public PoliceCar(
-        string name,
-        string model,
-        int speed,
-        int fuel,
-        int condition,
-        bool sirenOn)
-        : base(name, model, speed, fuel, condition)
+    public PoliceCar(string name, string model, int speed, int fuel,
+        int condition, bool sirenOn, Guid? id = null)
+        : base(name, model, speed, fuel, condition, id)
     {
         SirenOn = sirenOn;
     }

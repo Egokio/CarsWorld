@@ -8,14 +8,9 @@ public class TowTruck : Car, IRepairable
 {
     public int TowCapacity { get; private set; }
 
-    public TowTruck(
-        string name,
-        string model,
-        int speed,
-        int fuel,
-        int condition,
-        int towCapacity)
-        : base(name, model, speed, fuel, condition)
+    public TowTruck(string name, string model, int speed, int fuel,
+        int condition, int towCapacity, Guid? id = null)
+        : base(name, model, speed, fuel, condition, id)
     {
         if (towCapacity <= 0)
         {

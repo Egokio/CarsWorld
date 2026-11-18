@@ -1,10 +1,11 @@
 ﻿
+using Cars.Core;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Cars.Core;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 
 namespace Cars.WpfApp.ViewModels;
 
@@ -14,6 +15,8 @@ public class MainViewModel : INotifyPropertyChanged
     private string selectedRepository = "Race Car";
     private Car? selectedCar;
 
+    // Stores the currently selected car group.
+    private CarGroup? selectedGroup;
 
     private string newCarName = "";
     private string newCarModel = "";
@@ -173,10 +176,21 @@ public class MainViewModel : INotifyPropertyChanged
     private readonly Repository<TowTruck> towTrucks = new();
     private readonly Repository<PoliceCar> policeCars = new();
 
+    // Provides access to the selected world storage implementation.
+    private readonly IWorldStorage worldStorage;
+
+
     public RelayCommand AddCarCommand { get; }
     public RelayCommand RemoveCarCommand { get; }
     public RelayCommand SortBySpeedCommand { get; }
     public RelayCommand GroupByTypeCommand { get; }
+
+    // Command for creating a new car group.
+    public RelayCommand AddGroupCommand { get; }
+
+    // Commands for managing car group membership.
+    public RelayCommand AddCarToGroupCommand { get; }
+    public RelayCommand RemoveCarFromGroupCommand { get; }
 
     private bool showGroups;
 
@@ -191,8 +205,11 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    public MainViewModel()
+    // Receives the selected storage implementation through dependency injection.
+    public MainViewModel(IWorldStorage worldStorage)
     {
+        this.worldStorage = worldStorage
+            ?? throw new ArgumentNullException(nameof(worldStorage));
 
         SortBySpeedCommand = new RelayCommand(
     _ => SortBySpeedDescending = !SortBySpeedDescending);
@@ -230,7 +247,19 @@ public class MainViewModel : INotifyPropertyChanged
         SubscribeToRepository(raceCars);
         SubscribeToRepository(towTrucks);
         SubscribeToRepository(policeCars);
+
+        // Connects commands to methods for managing car groups.
+        AddGroupCommand = new RelayCommand(_ => AddGroup());
+
+        AddCarToGroupCommand = new RelayCommand(
+            _ => AddCarToGroup(),
+            _ => SelectedCar != null && SelectedGroup != null);
+
+        RemoveCarFromGroupCommand = new RelayCommand(
+            _ => RemoveCarFromGroup(),
+            _ => SelectedCar != null && SelectedGroup != null);
     }
+
 
 
     private void SubscribeToRepository<T>(Repository<T> repository)
@@ -250,6 +279,16 @@ public class MainViewModel : INotifyPropertyChanged
         car.Reacted += OnCarReacted;
         car.CrazyActionPerformed += OnCrazyActionPerformed;
     }
+
+    // Removes ViewModel event subscriptions from a car.
+    private void UnsubscribeFromCar(Car car)
+    {
+        car.Greeted -= OnCarGreeted;
+        car.Farewell -= OnCarFarewell;
+        car.Reacted -= OnCarReacted;
+        car.CrazyActionPerformed -= OnCrazyActionPerformed;
+    }
+
 
     private void OnCarGreeted(object? sender, CarEventArgs e)
     {
@@ -284,6 +323,11 @@ public class MainViewModel : INotifyPropertyChanged
     public ObservableCollection<IGrouping<string, Car>> CarsByType { get; } = new();
 
     public ObservableCollection<string> Log { get; } = new();
+
+    public ObservableCollection<CarGroup> Groups { get; } = new();
+
+    // Stores the cars that belong to the selected group.
+    public ObservableCollection<Car> SelectedGroupCars { get; } = new();
 
     public string LogText => string.Join(
     Environment.NewLine,
@@ -335,8 +379,29 @@ public class MainViewModel : INotifyPropertyChanged
             selectedCar = value;
             OnPropertyChanged();
             RemoveCarCommand?.RaiseCanExecuteChanged();
+            AddCarToGroupCommand?.RaiseCanExecuteChanged();
+            RemoveCarFromGroupCommand?.RaiseCanExecuteChanged();
         }
     }
+
+        // Gets or sets the currently selected car group.
+    public CarGroup? SelectedGroup
+        {
+            get => selectedGroup;
+            set
+            {
+                if (selectedGroup != value)
+                {
+                    selectedGroup = value;
+                    OnPropertyChanged();
+                    RefreshSelectedGroupCars();
+                AddCarToGroupCommand?.RaiseCanExecuteChanged();
+                    RemoveCarFromGroupCommand?.RaiseCanExecuteChanged();
+                }
+            }
+        }
+
+ 
 
     private IEnumerable<Car> GetCarsFromSelectedRepository()
     {
@@ -595,14 +660,231 @@ public class MainViewModel : INotifyPropertyChanged
     }
 
 
+    // Creates a new car group.
+    private void AddGroup()
+    {
+        // Sets the default name for a new group.
+        string groupName = "New Group";
+        int number = 2;
+
+        // Generates a unique name if the default name already exists.
+        while (Groups.Any(g =>
+            g.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase)))
+        {
+            groupName = $"New Group {number}";
+            number++;
+        }
+
+        // Creates a new group with a unique ID.
+        var group = new CarGroup(groupName);
+
+        // Adds the group to the collection.
+        Groups.Add(group);
+
+        // Selects the newly created group.
+        SelectedGroup = group;
+
+        // Records the action in the application log.
+        Log.Add($"Group '{group.Name}' was created.");
+    }
+
+
+    // Adds the selected car to the selected group.
+    private void AddCarToGroup()
+    {
+        // Checks whether a car and a group are selected.
+        if (SelectedCar == null || SelectedGroup == null)
+            return;
+
+        // Prevents adding the same car more than once.
+        if (SelectedGroup.CarIds.Contains(SelectedCar.Id))
+        {
+            Log.Add($"Car '{SelectedCar.Name}' is already in group '{SelectedGroup.Name}'.");
+            return;
+        }
+
+        // Adds the selected car to the group.
+        SelectedGroup.AddCar(SelectedCar.Id);
+
+        RefreshSelectedGroupCars();
+
+        // Records the action in the application log.
+        Log.Add($"Car '{SelectedCar.Name}' was added to group '{SelectedGroup.Name}'.");
+    }
+
+    // Removes the selected car from the selected group.
+    private void RemoveCarFromGroup()
+    {
+        // Checks whether a car and a group are selected.
+        if (SelectedCar == null || SelectedGroup == null)
+            return;
+
+        // Checks whether the car belongs to the selected group.
+        if (!SelectedGroup.CarIds.Contains(SelectedCar.Id))
+        {
+            Log.Add($"Car '{SelectedCar.Name}' is not in group '{SelectedGroup.Name}'.");
+            return;
+        }
+
+        // Removes the selected car from the group.
+        SelectedGroup.RemoveCar(SelectedCar.Id);
+
+        RefreshSelectedGroupCars();
+
+        // Records the action in the application log.
+        Log.Add($"Car '{SelectedCar.Name}' was removed from group '{SelectedGroup.Name}'.");
+    }
+
+    // Updates the list of cars belonging to the selected group.
+    private void RefreshSelectedGroupCars()
+    {
+        // Clears the previous list.
+        SelectedGroupCars.Clear();
+
+        // Stops if no group is selected.
+        if (SelectedGroup == null)
+            return;
+
+        // Finds the cars that belong to the selected group.
+        foreach (Guid carId in SelectedGroup.CarIds)
+        {
+            Car? car = AllCars.FirstOrDefault(c => c.Id == carId);
+
+            if (car != null)
+            {
+                SelectedGroupCars.Add(car);
+            }
+        }
+    }
+
+
+    // Saves the current cars and groups to the selected storage.
+    public async Task SaveWorldAsync(string path)
+    {
+        try
+        {
+            // Collects all cars from the three repositories.
+            List<Car> allCars = raceCars.GetAll()
+                .Cast<Car>()
+                .Concat(towTrucks.GetAll())
+                .Concat(policeCars.GetAll())
+                .ToList();
+
+            // Converts the current world into a storage DTO.
+            WorldDto world = WorldMapper.ToWorldDto(allCars, Groups);
+
+            // Saves the world using the injected storage implementation.
+            await worldStorage.SaveAsync(world, path);
+
+            Log.Add("World was saved successfully.");
+        }
+        catch (Exception ex)
+        {
+            // Reports the error without changing the current world.
+            Log.Add($"Failed to save world: {ex.Message}");
+        }
+    }
+
+    // Loads a saved world and replaces the current data after successful validation.
+    public async Task LoadWorldAsync(string path)
+    {
+        try
+        {
+            // Reads the saved world using the selected storage implementation.
+            WorldDto world = await worldStorage.LoadAsync(path);
+
+            // Recreates all cars and groups before changing the current world.
+            var restoredWorld = WorldMapper.FromWorldDto(world);
+
+            List<Car> restoredCars = restoredWorld.Cars;
+            List<CarGroup> restoredGroups = restoredWorld.Groups;
+
+            // Separates the restored cars by their concrete types.
+            List<RaceCar> restoredRaceCars = restoredCars
+                .OfType<RaceCar>()
+                .ToList();
+
+            List<TowTruck> restoredTowTrucks = restoredCars
+                .OfType<TowTruck>()
+                .ToList();
+
+            List<PoliceCar> restoredPoliceCars = restoredCars
+                .OfType<PoliceCar>()
+                .ToList();
+
+            // Stops the current simulation before replacing the world.
+            simulationCancellation?.Cancel();
+
+            // Removes ViewModel event subscriptions from the old cars.
+            foreach (Car car in raceCars.GetAll()
+                         .Cast<Car>()
+                         .Concat(towTrucks.GetAll())
+                         .Concat(policeCars.GetAll()))
+            {
+                UnsubscribeFromCar(car);
+            }
+
+            // Clears the old repositories and their event subscriptions.
+            raceCars.Clear();
+            towTrucks.Clear();
+            policeCars.Clear();
+
+            // Restores cars without triggering greeting or reaction events.
+            foreach (RaceCar car in restoredRaceCars)
+            {
+                raceCars.Restore(car);
+                SubscribeToCar(car);
+            }
+
+            foreach (TowTruck car in restoredTowTrucks)
+            {
+                towTrucks.Restore(car);
+                SubscribeToCar(car);
+            }
+
+            foreach (PoliceCar car in restoredPoliceCars)
+            {
+                policeCars.Restore(car);
+                SubscribeToCar(car);
+            }
+
+            // Replaces the current groups with the restored groups.
+            Groups.Clear();
+
+            foreach (CarGroup group in restoredGroups)
+            {
+                Groups.Add(group);
+            }
+
+            // Clears the previously selected group.
+            SelectedGroup = null;
+
+            // Clears the list of cars from the previously selected group.
+            SelectedGroupCars.Clear();
+
+            // Clears selections that may reference cars from the old world.
+            SelectedCarsForSimulation.Clear();
+            SelectedCar = null;
+
+            // Refreshes the collections displayed by the interface.
+            RefreshCars();
+
+            Log.Add("World was loaded successfully.");
+        }
+        catch (Exception ex)
+        {
+            // Keeps the current world unchanged if reading or validation fails.
+            Log.Add($"Failed to load world: {ex.Message}");
+        }
+    }
+
 
     // Removes the selected car from its repository.
+
 
     private void RemoveCar()
     {
         // Checks whether a car is selected.
-
-
         if (SelectedCar == null)
             return;
 
@@ -610,8 +892,6 @@ public class MainViewModel : INotifyPropertyChanged
         bool removed = false;
 
         // Removes the car from the repository matching its type.
-
-
         switch (car)
         {
             case RaceCar raceCar:
@@ -627,23 +907,26 @@ public class MainViewModel : INotifyPropertyChanged
                 break;
         }
 
-
         // Stops if the car was not removed.
-
         if (!removed)
             return;
 
+        // Removes the deleted car from every group.
+        foreach (CarGroup group in Groups)
+        {
+            group.RemoveCar(car.Id);
+        }
 
-        // Updates the displayed list and clears the selection.
+        // Updates the displayed group.
+        RefreshSelectedGroupCars();
 
+        // Updates the displayed car list and clears the selection.
         RefreshCars();
 
-
         // Records the removal in the activity log.
-
-
         Log.Add($"{car.Name} was removed from the garage.");
     }
+
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

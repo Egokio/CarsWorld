@@ -14,6 +14,8 @@ using Cars.WpfApp.ViewModels;
 using System.Linq;
 using Cars.Core;
 using Cars.WpfApp.ViewModels;
+using Microsoft.Win32;
+
 
 namespace Cars.WpfApp;
 
@@ -22,16 +24,17 @@ public partial class MainWindow : Window
 
 
 
-    public MainWindow()
+    // Receives the ViewModel created by the application startup.
+    public MainWindow(MainViewModel viewModel)
     {
         InitializeComponent();
 
-        DataContext = new MainViewModel();
+        // Uses the ViewModel provided by the application.
+        DataContext = viewModel;
 
 
         // Updates the UI when the user switches between the car table and grouped view.
 
-        var viewModel = (MainViewModel)DataContext;
         viewModel.PropertyChanged += (s, e) =>
         {
             if (e.PropertyName == nameof(MainViewModel.ShowGroups))
@@ -327,6 +330,52 @@ SelectionChangedEventArgs e)
     {
 
     }
+
+    // Opens a dialog and saves the current world to the selected file.
+    private async void SaveWorldButton_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel viewModel)
+            return;
+
+        // Lets the user choose where to save the JSON file.
+        SaveFileDialog dialog = new()
+        {
+            Filter = "World files (*.json;*.xml)|*.json;*.xml|JSON files (*.json)|*.json|XML files (*.xml)|*.xml",
+            DefaultExt = ".xml",
+            AddExtension = true,
+            FileName = "CarsWorld"
+        };
+
+        if (dialog.ShowDialog() != true)
+            return;
+
+        await viewModel.SaveWorldAsync(dialog.FileName);
+    }
+
+    // Opens a dialog and loads the selected world file.
+    private async void LoadWorldButton_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel viewModel)
+            return;
+
+        // Lets the user select a previously saved JSON file.
+        OpenFileDialog dialog = new()
+        {
+            Filter = "World files (*.json;*.xml)|*.json;*.xml|JSON files (*.json)|*.json|XML files (*.xml)|*.xml",
+            DefaultExt = ".xml",
+            CheckFileExists = true
+        };
+
+        if (dialog.ShowDialog() != true)
+            return;
+
+        await viewModel.LoadWorldAsync(dialog.FileName);
+    }
+
 }
 
 

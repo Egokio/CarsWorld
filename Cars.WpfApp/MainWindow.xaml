@@ -1,7 +1,10 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Cars.WpfApp.MainWindow"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Cars.WpfApp.MainWindow"
         Title="Cars World"
         Height="584"
         Width="878">
@@ -12,8 +15,11 @@
             <ColumnDefinition Width="395*"/>
             <ColumnDefinition Width="453*"/>
         </Grid.ColumnDefinitions>
-        <TabControl SelectionChanged="TabControl_SelectionChanged_1" Grid.ColumnSpan="3">
-            
+
+        <TabControl SelectionChanged="TabControl_SelectionChanged_1"
+                    Grid.ColumnSpan="3">
+
+            <!-- Cars Tab -->
             <TabItem Header="Cars">
                 <Grid Background="#FFF3F5F8" Margin="8">
                     <Grid.RowDefinitions>
@@ -23,81 +29,81 @@
                         <RowDefinition Height="48"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Search -->
+                    <!-- Search and sorting -->
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBox x:Name="SearchBox"
-             Grid.Column="0"
-             Margin="4,3,8,5"
-             Padding="8,4"
-             FontSize="14"
-             ToolTip="Search by name or model"
-             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
-
-
+                                     Grid.Column="0"
+                                     Margin="4,3,8,5"
+                                     Padding="8,4"
+                                     FontSize="14"
+                                     ToolTip="Search by name or model"
+                                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
                             <Button Grid.Column="2"
-            Content="Group by Type"
-            Margin="4,3,4,5"
-            Padding="12,4"
-            Command="{Binding GroupByTypeCommand}"/>
+                                    Content="Group by Type"
+                                    Margin="4,3,4,5"
+                                    Padding="12,4"
+                                    Command="{Binding GroupByTypeCommand}"/>
                         </Grid>
 
                         <Button Grid.Column="1"
-            Content="Sort by Speed"
-            Margin="4,3,4,5"
-            Padding="12,4"
-            Command="{Binding SortBySpeedCommand}"/>
+                                Content="Sort by Speed"
+                                Margin="4,3,4,5"
+                                Padding="12,4"
+                                Command="{Binding SortBySpeedCommand}"/>
                     </Grid>
 
                     <!-- Cars table -->
                     <DataGrid x:Name="CarsGrid"
-                  Grid.Row="1"
-                  Margin="4"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  CanUserAddRows="False"
-                  SelectionMode="Single"
-                  SelectionChanged="CarsGrid_SelectionChanged"
-                  HeadersVisibility="Column"
-                  GridLinesVisibility="Horizontal"
-                  RowHeight="30"
-                  ColumnHeaderHeight="34">
+                              Grid.Row="1"
+                              Margin="4"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              SelectionMode="Single"
+                              SelectionChanged="CarsGrid_SelectionChanged"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              RowHeight="30"
+                              ColumnHeaderHeight="34">
+
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name"
-                                    Binding="{Binding Name}"
-                                    Width="2*"/>
+                                                Binding="{Binding Name}"
+                                                Width="2*"/>
                             <DataGridTextColumn Header="Model"
-                                    Binding="{Binding Model}"
-                                    Width="2*"/>
+                                                Binding="{Binding Model}"
+                                                Width="2*"/>
                             <DataGridTextColumn Header="Speed"
-                                    Binding="{Binding Speed}"
-                                    Width="*"/>
+                                                Binding="{Binding Speed}"
+                                                Width="*"/>
                             <DataGridTextColumn Header="Fuel"
-                                    Binding="{Binding Fuel}"
-                                    Width="*"/>
+                                                Binding="{Binding Fuel}"
+                                                Width="*"/>
                             <DataGridTextColumn Header="Condition"
-                                    Binding="{Binding Condition}"
-                                    Width="1.3*"/>
+                                                Binding="{Binding Condition}"
+                                                Width="1.3*"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    
+
+                    <!-- Cars grouped by type -->
                     <ListBox x:Name="CarsGroupsList"
-         Grid.Row="1"
-         Margin="4"
-         ItemsSource="{Binding CarsByType}"
-         Visibility="Collapsed">
+                             Grid.Row="1"
+                             Margin="4"
+                             ItemsSource="{Binding CarsByType}"
+                             Visibility="Collapsed">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <GroupBox Header="{Binding Key}" Margin="4">
@@ -105,7 +111,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Margin="6,3"
-                                       Text="{Binding Name}"/>
+                                                           Text="{Binding Name}"/>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -113,15 +119,16 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    
+
                     <!-- New car form -->
                     <Border Grid.Row="2"
-                Margin="4"
-                Padding="8"
-                Background="White"
-                BorderBrush="#FFD7DEE8"
-                BorderThickness="1"
-                CornerRadius="6">
+                            Margin="4"
+                            Padding="8"
+                            Background="White"
+                            BorderBrush="#FFD7DEE8"
+                            BorderThickness="1"
+                            CornerRadius="6">
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -139,79 +146,79 @@
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="4">
                                 <Label Content="Name" FontWeight="Bold" Padding="0,0,0,2"/>
                                 <TextBox x:Name="NameBox"
-                             Height="28"
-                             Padding="5,3"
-                             Text="{Binding NewCarName, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Height="28"
+                                         Padding="5,3"
+                                         Text="{Binding NewCarName, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
 
                             <!-- Model -->
                             <StackPanel Grid.Row="0" Grid.Column="1" Margin="4">
                                 <Label Content="Model" FontWeight="Bold" Padding="0,0,0,2"/>
                                 <TextBox x:Name="ModelBox"
-                             Height="28"
-                             Padding="5,3"
-                             Text="{Binding NewCarModel, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Height="28"
+                                         Padding="5,3"
+                                         Text="{Binding NewCarModel, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
 
                             <!-- Car type -->
                             <StackPanel Grid.Row="0" Grid.Column="2" Margin="4">
                                 <Label Content="Car type" FontWeight="Bold" Padding="0,0,0,2"/>
                                 <ComboBox x:Name="CarTypeBox"
-                              Height="28"
-                              SelectionChanged="CarTypeBox_SelectionChanged"/>
+                                          Height="28"
+                                          SelectionChanged="CarTypeBox_SelectionChanged"/>
                             </StackPanel>
 
                             <!-- Speed -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="4">
                                 <Label Content="Speed" FontWeight="Bold" Padding="0,0,0,2"/>
                                 <TextBox x:Name="SpeedBox"
-                             Height="28"
-                             Padding="5,3"
-                             Text="{Binding NewCarSpeed, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Height="28"
+                                         Padding="5,3"
+                                         Text="{Binding NewCarSpeed, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
 
                             <!-- Fuel -->
                             <StackPanel Grid.Row="1" Grid.Column="1" Margin="4">
                                 <Label Content="Fuel" FontWeight="Bold" Padding="0,0,0,2"/>
                                 <TextBox x:Name="FuelBox"
-                             Height="28"
-                             Padding="5,3"
-                             Text="{Binding NewCarFuel, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Height="28"
+                                         Padding="5,3"
+                                         Text="{Binding NewCarFuel, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
 
                             <!-- Condition -->
                             <StackPanel Grid.Row="1" Grid.Column="2" Margin="4">
                                 <Label Content="Condition" FontWeight="Bold" Padding="0,0,0,2"/>
                                 <TextBox x:Name="ConditionBox"
-                             Height="28"
-                             Padding="5,3"
-                             Text="{Binding NewCarCondition, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Height="28"
+                                         Padding="5,3"
+                                         Text="{Binding NewCarCondition, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
 
                             <!-- Turbo level -->
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="4">
                                 <Label Content="Turbo level" FontWeight="Bold" Padding="0,0,0,2"/>
                                 <TextBox x:Name="TurboLevelBox"
-                             Height="28"
-                             Padding="5,3"
-                             Text="{Binding NewTurboLevel, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Height="28"
+                                         Padding="5,3"
+                                         Text="{Binding NewTurboLevel, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
 
                             <!-- Tow capacity -->
                             <StackPanel Grid.Row="2" Grid.Column="1" Margin="4">
                                 <Label Content="Tow capacity" FontWeight="Bold" Padding="0,0,0,2"/>
                                 <TextBox x:Name="TowCapacityBox"
-                             Height="28"
-                             Padding="5,3"
-                             Text="{Binding NewTowCapacity, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Height="28"
+                                         Padding="5,3"
+                                         Text="{Binding NewTowCapacity, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
 
                             <!-- Siren -->
                             <StackPanel Grid.Row="2" Grid.Column="2" Margin="4">
                                 <Label Content="Siren on" FontWeight="Bold" Padding="0,0,0,2"/>
                                 <ComboBox x:Name="SirenOnBox"
-                              Height="28"
-                              SelectedValue="{Binding NewSirenOn, UpdateSourceTrigger=PropertyChanged}"/>
+                                          Height="28"
+                                          SelectedValue="{Binding NewSirenOn, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -221,35 +228,62 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
                         <Button x:Name="AddCarButton"
-                    Grid.Column="0"
-                    Content="＋  Add Car"
-                    Command="{Binding AddCarCommand}"
-                    Margin="0,0,4,0"
-                    FontSize="14"
-                    FontWeight="Bold"
-                    Background="#FF2463A6"
-                    Foreground="White"
-                    BorderThickness="0"
-                    Cursor="Hand"/>
+                                Grid.Column="0"
+                                Content="＋ Add Car"
+                                Command="{Binding AddCarCommand}"
+                                Margin="0,0,3,0"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Background="#FF2463A6"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"/>
 
                         <Button x:Name="RemoveCarButton"
-                    Grid.Column="1"
-                    Content="✕  Remove Car"
-                    Command="{Binding RemoveCarCommand}"
-                    Margin="4,0,0,0"
-                    FontSize="14"
-                    FontWeight="Bold"
-                    Background="#FFB93C45"
-                    Foreground="White"
-                    BorderThickness="0"
-                    Cursor="Hand"/>
+                                Grid.Column="1"
+                                Content="✕ Remove Car"
+                                Command="{Binding RemoveCarCommand}"
+                                Margin="3,0"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Background="#FFB93C45"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"/>
+
+                        <Button x:Name="SaveWorldButton"
+                                Grid.Column="2"
+                                Content="Save World"
+                                Click="SaveWorldButton_Click"
+                                Margin="3,0"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Background="#FF39845B"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"/>
+
+                        <Button x:Name="LoadWorldButton"
+                                Grid.Column="3"
+                                Content="Load World"
+                                Click="LoadWorldButton_Click"
+                                Margin="3,0,0,0"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Background="#FF526477"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"/>
                     </Grid>
                 </Grid>
-
             </TabItem>
+
+            <!-- Selected Car Tab -->
             <TabItem Header="Selected Car" Margin="1,-2,-4,0">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
@@ -258,6 +292,7 @@
                         <ColumnDefinition Width="13*"/>
                         <ColumnDefinition Width="697*"/>
                     </Grid.ColumnDefinitions>
+
                     <StackPanel Grid.ColumnSpan="4">
                         <TextBlock TextWrapping="Wrap" FontSize="20" FontWeight="Bold" Text="Selected Car"/>
                         <TextBlock x:Name="SelectedNameLabel" TextWrapping="Wrap" FontWeight="Bold" Text="Name:"/>
@@ -277,23 +312,71 @@
                         <TextBlock x:Name="SelectedSirenLabel" TextWrapping="Wrap" Text="Siren On:" FontWeight="Bold"/>
                         <TextBlock x:Name="SelectedSirenValue" TextWrapping="Wrap"/>
                     </StackPanel>
-                    <Button x:Name="CrazyActionButton" Content="Crazy Action!" HorizontalAlignment="Left" Margin="10,292,0,0" VerticalAlignment="Top" Width="178" Click="Button_Click_2" Height="34" FontSize="16" FontWeight="Bold" Grid.ColumnSpan="4"/>
-                    <Button x:Name="RepairButton" Content="Repair" HorizontalAlignment="Left" Margin="10,393,0,0" VerticalAlignment="Top" Height="28" Width="178" FontWeight="Bold" Click="RepairButton_Click" Grid.ColumnSpan="4"/>
-                    <Button x:Name="RefuelButton" Content="Refuel" HorizontalAlignment="Left" Margin="10,360,0,0" VerticalAlignment="Top" Height="27" Width="178" FontWeight="Bold" Click="RefuelButton_Click" Grid.ColumnSpan="4"/>
-                    <TextBox x:Name="ActionAmountBox" HorizontalAlignment="Center" Margin="0,332,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
-                    <TextBlock HorizontalAlignment="Left" Margin="10,331,0,0" TextWrapping="Wrap" Text="Amount" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
-<Button x:Name="DriveButton"
-        Content="Drive"
-        HorizontalAlignment="Left"
-        Margin="10,426,0,0"
-        VerticalAlignment="Top"
-        Click="Button_Click_1"
-        Height="30"
-        Width="178"
-        FontWeight="Bold"
-        Grid.ColumnSpan="4"/>
+
+                    <Button x:Name="CrazyActionButton"
+                            Content="Crazy Action!"
+                            HorizontalAlignment="Left"
+                            Margin="10,292,0,0"
+                            VerticalAlignment="Top"
+                            Width="178"
+                            Click="Button_Click_2"
+                            Height="34"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Grid.ColumnSpan="4"/>
+
+                    <Button x:Name="RepairButton"
+                            Content="Repair"
+                            HorizontalAlignment="Left"
+                            Margin="10,393,0,0"
+                            VerticalAlignment="Top"
+                            Height="28"
+                            Width="178"
+                            FontWeight="Bold"
+                            Click="RepairButton_Click"
+                            Grid.ColumnSpan="4"/>
+
+                    <Button x:Name="RefuelButton"
+                            Content="Refuel"
+                            HorizontalAlignment="Left"
+                            Margin="10,360,0,0"
+                            VerticalAlignment="Top"
+                            Height="27"
+                            Width="178"
+                            FontWeight="Bold"
+                            Click="RefuelButton_Click"
+                            Grid.ColumnSpan="4"/>
+
+                    <TextBox x:Name="ActionAmountBox"
+                             HorizontalAlignment="Center"
+                             Margin="0,332,0,0"
+                             TextWrapping="Wrap"
+                             VerticalAlignment="Top"
+                             Width="120"
+                             Grid.Column="1"/>
+
+                    <TextBlock HorizontalAlignment="Left"
+                               Margin="10,331,0,0"
+                               TextWrapping="Wrap"
+                               Text="Amount"
+                               VerticalAlignment="Top"
+                               FontSize="14"
+                               FontWeight="Bold"/>
+
+                    <Button x:Name="DriveButton"
+                            Content="Drive"
+                            HorizontalAlignment="Left"
+                            Margin="10,426,0,0"
+                            VerticalAlignment="Top"
+                            Click="Button_Click_1"
+                            Height="30"
+                            Width="178"
+                            FontWeight="Bold"
+                            Grid.ColumnSpan="4"/>
                 </Grid>
             </TabItem>
+
+            <!-- Log Tab -->
             <TabItem Header="Log" Margin="5,-3,-10,1">
                 <Grid Background="#FFE5E5E5">
                     <Grid.RowDefinitions>
@@ -302,10 +385,10 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Action Log"
-                   FontSize="20"
-                   FontWeight="Bold"
-                   Margin="10"
-                   VerticalAlignment="Center"/>
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Margin="10"
+                               VerticalAlignment="Center"/>
 
                     <TextBox x:Name="LogTextBox"
                              Grid.Row="1"
@@ -313,10 +396,11 @@
                              IsReadOnly="True"
                              TextWrapping="Wrap"
                              VerticalScrollBarVisibility="Auto"
-                             Text="{Binding LogText, Mode=OneWay}"/>            
+                             Text="{Binding LogText, Mode=OneWay}"/>
                 </Grid>
             </TabItem>
 
+            <!-- Simulation Tab -->
             <TabItem Header="Simulation" Margin="10,-3,-13,1">
                 <Grid Background="#FFF3F5F8" Margin="10">
                     <Grid.RowDefinitions>
@@ -328,22 +412,22 @@
 
                     <StackPanel Grid.Row="0" Margin="5">
                         <TextBlock Text="Car Simulation"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Margin="0,0,0,8"/>
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,8"/>
 
                         <TextBlock Text="Select at least three cars and choose the workload."
-                       Margin="0,0,0,8"/>
+                                   Margin="0,0,0,8"/>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                             <TextBlock Text="Workload:"
-                           VerticalAlignment="Center"
-                           Margin="0,0,8,0"/>
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0"/>
 
                             <ComboBox x:Name="SimulationWorkloadBox"
-                                        Width="120"
-                                        SelectedValue="{Binding SimulationWorkload, Mode=TwoWay}"
-                                        SelectedValuePath="Content">
+                                      Width="120"
+                                      SelectedValue="{Binding SimulationWorkload, Mode=TwoWay}"
+                                      SelectedValuePath="Content">
                                 <ComboBoxItem Content="1"/>
                                 <ComboBoxItem Content="3"/>
                                 <ComboBoxItem Content="5"/>
@@ -355,46 +439,113 @@
                     </StackPanel>
 
                     <ListBox x:Name="SimulationCarsList"
-         Grid.Row="1"
-         Margin="5"
-         SelectionMode="Extended"
-         DisplayMemberPath="Name"
-         SelectionChanged="SimulationCarsList_SelectionChanged"/>
+                             Grid.Row="1"
+                             Margin="5"
+                             SelectionMode="Extended"
+                             DisplayMemberPath="Name"
+                             SelectionChanged="SimulationCarsList_SelectionChanged"/>
 
                     <StackPanel Grid.Row="2"
-                    Orientation="Horizontal"
-                    Margin="5">
+                                Orientation="Horizontal"
+                                Margin="5">
+
                         <Button x:Name="RunSequentialButton"
-                    Content="Run Sequential"
-                    Command="{Binding RunSequentialCommand}"
-                    Padding="10,6"
-                    Margin="0,0,8,0"/>
-                    
+                                Content="Run Sequential"
+                                Command="{Binding RunSequentialCommand}"
+                                Padding="10,6"
+                                Margin="0,0,8,0"/>
 
                         <Button x:Name="RunParallelButton"
-                    Content="Run Parallel"
+                                Content="Run Parallel"
                                 Command="{Binding RunParallelCommand}"
-                    Padding="10,6"
-                    Margin="0,0,8,0"/>
+                                Padding="10,6"
+                                Margin="0,0,8,0"/>
 
                         <Button x:Name="CancelSimulationButton"
-                    Content="Cancel"
-                    Command="{Binding CancelSimulationCommand}"
-                    Padding="10,6"/>
+                                Content="Cancel"
+                                Command="{Binding CancelSimulationCommand}"
+                                Padding="10,6"/>
                     </StackPanel>
 
                     <TextBox x:Name="SimulationReportBox"
-                 Grid.Row="3"
-                 Margin="5"
-                 IsReadOnly="True"
-                 TextWrapping="Wrap"
-                 AcceptsReturn="True"
-                 Text="{Binding SimulationReportText, Mode=OneWay}"
-                 VerticalScrollBarVisibility="Auto"/>
+                             Grid.Row="3"
+                             Margin="5"
+                             IsReadOnly="True"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             Text="{Binding SimulationReportText, Mode=OneWay}"
+                             VerticalScrollBarVisibility="Auto"/>
                 </Grid>
             </TabItem>
+            <TabItem Header="Groups" Margin="12,-2,-17,0">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
+                    <!-- Group selection and creation -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <ComboBox
+                Width="220"
+                Height="30"
+                ItemsSource="{Binding Groups}"
+                DisplayMemberPath="Name"
+                SelectedItem="{Binding SelectedGroup, Mode=TwoWay}"
+                Margin="0,0,10,0"/>
+
+                        <Button
+                Content="Add Group"
+                Width="110"
+                Height="30"
+                Command="{Binding AddGroupCommand}"/>
+                    </StackPanel>
+
+                    <!-- Currently selected car -->
+                    <TextBlock
+            Grid.Row="1"
+            Text="{Binding SelectedCar.Name, StringFormat=Selected car: {0}}"
+            FontWeight="Bold"
+            Margin="0,0,0,10"/>
+
+                    <!-- Cars belonging to the selected group -->
+                    <GroupBox
+            Grid.Row="2"
+            Header="Cars in selected group"
+            Margin="0,0,0,10">
+
+                        <ListBox ItemsSource="{Binding SelectedGroupCars}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="5">
+                                        <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                        <TextBlock Text=" — "/>
+                                        <TextBlock Text="{Binding Model}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </GroupBox>
+
+                    <!-- Group membership actions -->
+                    <StackPanel Grid.Row="3" Orientation="Horizontal">
+                        <Button
+                Content="Add Selected Car"
+                Width="150"
+                Height="32"
+                Margin="0,0,10,0"
+                Command="{Binding AddCarToGroupCommand}"/>
+
+                        <Button
+                Content="Remove Selected Car"
+                Width="160"
+                Height="32"
+                Command="{Binding RemoveCarFromGroupCommand}"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
-
 </Window>

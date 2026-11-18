@@ -8,14 +8,9 @@ public class RaceCar : Car, IRefuelable
 {
     public int TurboLevel { get; private set; }
 
-    public RaceCar(
-        string name,
-        string model,
-        int speed,
-        int fuel,
-        int condition,
-        int turboLevel)
-        : base(name, model, speed, fuel, condition)
+    public RaceCar(string name, string model, int speed, int fuel,
+        int condition, int turboLevel, Guid? id = null)
+        : base(name, model, speed, fuel, condition, id)
     {
         if (turboLevel < 0 || turboLevel > 100)
         {

@@ -1,246 +1,178 @@
 # Cars World
 
-## Purpose
+## Project Description
 
-Cars World is a humorous WPF application inspired by the Disney Cars universe.
+Cars World is a WPF desktop application developed in C# and .NET.
 
-The application allows the user to create different cars, select them, view their details, remove them and perform special actions.
+The application simulates a world of different cars. Users can create and manage cars, perform actions, organize cars into groups, and save or load the entire world.
 
-The project demonstrates object-oriented programming principles using C#.
+The application supports three storage methods:
+- JSON file storage
+- XML file storage
+- SQL Server LocalDB database storage
 
-## Solution Structure
+## Technologies
 
-The solution contains two projects:
+- C#
+- .NET
+- WPF (Windows Presentation Foundation)
+- SQL Server LocalDB
+- ADO.NET
+- Microsoft.Data.SqlClient
+- System.Text.Json
+- XML Serialization
+- Dependency Injection
 
-- `Cars.Core` — contains the domain logic, classes, inheritance, interfaces, validation and car behavior.
-- `Cars.WpfApp` — contains the WPF user interface and handles user interaction.
+## Project Structure
 
-`Cars.WpfApp` references `Cars.Core`.
+The solution contains two main projects:
 
-`Cars.Core` does not depend on WPF.
+- **Cars.Core** – contains the business logic, car classes, repositories, groups, DTOs, validation, mapping, and storage implementations.
+- **Cars.WpfApp** – contains the WPF user interface, ViewModels, application startup, and dependency injection configuration.
 
-## Class Hierarchy
+## Requirements
 
-The main abstract base class is:
+Before running the application, make sure you have:
 
-- `Car`
-
-Derived classes:
-
-- `RaceCar`
-- `TowTruck`
-- `PoliceCar`
-
-The `Car` class contains common properties such as:
-
-- Name
-- Model
-- Speed
-- Fuel
-- Condition
-
-The properties use protected state changes through methods, so the WPF application cannot directly modify the internal state.
-
-## Interfaces
-
-The application uses two interfaces:
-
-- `IRefuelable` — allows a car to be refueled.
-- `IRepairable` — allows a car to be repaired.
-
-`PoliceCar` implements both interfaces.
-
-The application checks capabilities using the `is` operator before performing interface actions.
-
-## Polymorphism and Crazy Action
-
-`Car` contains the abstract method:
-
-`CrazyAction()`
-
-Each derived class overrides this method with different behavior.
-
-### RaceCar
-
-Activates the turbo and increases the turbo level.
-
-### TowTruck
-
-Performs a rescue action using its tow cable.
-
-### PoliceCar
-
-Turns the police siren on or off.
-
-The WPF application calls `CrazyAction()` through the base `Car` reference, so the correct implementation is selected polymorphically.
-
-## Validation and State Rules
-
-Input validation is performed before creating a car.
-
-The application validates:
-
-- Car name
-- Car model
-- Speed
-- Fuel
-- Condition
-- Turbo level
-- Tow capacity
-- Siren selection
-
-Invalid input does not create or modify a car.
-
-Refuel and repair actions also validate their amounts.
-
-The internal state of a car cannot be changed directly from the WPF project.
-
-## User Interface
-
-The application uses a `TabControl` with three tabs:
-
-### Cars
-
-Displays all created cars in a `DataGrid`.
-
-The user can:
-
-- Add a car
-- Select a car
-- Remove a car
-
-### Selected Car
-
-Displays detailed information about the selected car.
-
-The user can perform:
-
-- Drive
-- Crazy Action
-- Refuel
-- Repair
-
-### Log
-
-Displays successful actions and important application messages.
-
-## Collection
-
-Cars are stored in:
-
-`ObservableCollection<Car>`
-
-The collection uses the abstract base type, allowing different car types to exist in the same collection.
-
-## Tested Use Cases
-
-The following scenarios were tested:
-
-1. Creating a valid Race Car.
-2. Creating a valid Tow Truck.
-3. Creating a valid Police Car.
-4. Rejecting invalid speed, fuel and condition values.
-5. Rejecting invalid action amounts.
-6. Removing a selected car.
-7. Using Crazy Action for all three car types.
-8. Refueling Race Car and Police Car.
-9. Repairing Tow Truck and Police Car.
-10. Using Drive and receiving different messages for different car types.
-11. Selecting a car and displaying its current state.
-12. Checking that invalid actions do not change valid car state.
-
-## Why TabControl Was Used
-
-`TabControl` was used to separate the main application functions into clear sections.
-
-The Cars tab is used for managing the collection, the Selected Car tab is used for interacting with one selected object, and the Log tab is used for viewing application history.
-
-This makes the interface easier to understand and keeps different responsibilities visually separated.
-
-## OOP Concepts Demonstrated
-
-The project demonstrates:
-
-- Abstraction
-- Inheritance
-- Encapsulation
-- Interfaces
-- Polymorphism
-- Abstract methods
-- Method overriding
-- Collections
-- Capability checks using `is`
-- Validation
-- Separation of Core and UI responsibilities
-
-
-## Simulation (Vol.3)
-
-The application includes CPU-intensive simulations for selected cars.
-
-### Simulation Features
-
-- Select at least three cars for a simulation.
-- Run calculations sequentially or in parallel.
-- Use immutable `CarSnapshot` records as simulation inputs.
-- Configure the simulation workload.
-- Measure the duration of each calculation and the total execution time.
-- Cancel running calculations using `CancellationToken`.
-- Handle errors independently for each car.
-- Display each car's status, result or error message, and execution duration.
-
-### Sequential and Parallel Execution
-
-**Sequential mode** processes one car at a time. Each calculation finishes before the next one begins.
-
-**Parallel mode** starts separate tasks for the selected cars and waits for all calculations to finish using `Task.WhenAll`.
-
-Both modes use `Stopwatch` to measure the total execution time.
-
-### Cancellation and Error Handling
-
-The simulation checks the cancellation token regularly during CPU-intensive calculations.
-
-Each car's calculation is handled independently. If one calculation fails, its error is included in the report while other calculations can continue.
-
-The report identifies each calculation as `Success`, `Error`, or `Cancelled`, where applicable.
-
-### Simulation Report
-
-The report includes:
-
-- Execution mode
-- Car name and status
-- Calculation result, when successful
-- Error or cancellation message, when applicable
-- Individual calculation duration
-- Total simulation duration
-
-### Running a Simulation
-
-1. Select at least three cars in the simulation section.
-2. Choose a workload.
-3. Click **Run Sequential** or **Run Parallel**.
-4. Review the simulation report.
-5. Click **Cancel** to request cancellation during a running simulation.
-
-
-## AI Usage
-
-AI assistance was used during development to help with:
-
-- Understanding WPF and C# concepts.
-- Planning the class hierarchy and interfaces.
-- Debugging compilation and event-handler problems.
-- Improving validation and resource usage.
-- Reviewing whether the implementation followed the assignment requirements.
-
-All generated code was checked manually, tested in Visual Studio and adjusted when necessary.
+- Windows
+- Visual Studio 2026 or a compatible version
+- .NET SDK required by the solution
+- SQL Server Express LocalDB (required only for SQL storage)
 
 ## How to Run
 
-1. Open the solution in Visual Studio.
-2. Make sure `Cars.WpfApp` is set as the startup project.
-3. Build the solution.
-4. Run the application.
-5. Add cars, test their actions, and run simulations using the simulation section.
+1. Clone or download the repository.
+2. Open `CarsWorld.slnx` in Visual Studio.
+3. Restore NuGet packages.
+4. Configure the storage type in User Secrets.
+5. Configure the database connection if SQL storage is selected.
+6. Build the solution.
+7. Run the `Cars.WpfApp` project.
+
+## Database Setup (SQL Server LocalDB)
+
+The application uses SQL Server LocalDB for database storage.
+
+### 1. Install LocalDB
+
+Install SQL Server Express LocalDB if it is not already installed.
+
+### 2. Create the Database
+
+Open SQL Server Object Explorer in Visual Studio and connect to:
+
+`(localdb)\MSSQLLocalDB`
+
+Create a database named:
+
+`CarsWorldDb`
+
+### 3. Create the Tables
+
+The database requires three tables:
+
+- `Cars` – stores car information and type-specific properties.
+- `CarGroups` – stores car groups.
+- `CarGroupMembers` – stores relationships between cars and groups.
+
+The `CarGroupMembers` table uses foreign keys to connect cars and groups. A car can belong to multiple groups.
+
+
+## Configuration
+
+The application uses User Secrets to store local configuration values.
+
+To configure User Secrets:
+
+1. Right-click the `Cars.WpfApp` project in Visual Studio.
+2. Select **Manage User Secrets**.
+3. Add the following configuration:
+
+```json
+{
+  "ConnectionStrings": {
+    "DatabaseConnection": "Server=(localdb)\\MSSQLLocalDB;Database=CarsWorldDb;Trusted_Connection=True;TrustServerCertificate=True;"
+  },
+  "Storage": {
+    "Type": "SQL"
+  }
+}
+```
+
+The connection string is required when SQL storage is selected.
+
+User Secrets keeps local connection settings outside the source code repository.
+
+## Storage Selection
+
+The storage implementation is selected during application startup using the `Storage:Type` setting in User Secrets.
+
+Available options:
+
+| Value | Storage implementation |
+|---|---|
+| `JSON` | JsonWorldStorage |
+| `XML` | XmlWorldStorage |
+| `SQL` | SqlWorldStorage |
+
+To change the storage method, update the `Storage:Type` value.
+
+For example, to use JSON:
+
+```json
+"Storage": {
+  "Type": "JSON"
+}
+```
+
+To use XML:
+
+```json
+"Storage": {
+  "Type": "XML"
+}
+```
+
+To use SQL Server LocalDB:
+
+```json
+"Storage": {
+  "Type": "SQL"
+}
+```
+
+Restart the application after changing the setting.
+
+## Saving and Loading the World
+
+The application can save and restore the complete car world.
+
+The saved data includes:
+
+- Car IDs and concrete car types
+- Car names and models
+- Speed, fuel, and condition
+- Type-specific properties (turbo level, tow capacity, and siren state)
+- Reaction counts
+- Group IDs and names
+- Car-to-group relationships
+
+When loading a world, the application recreates the correct car types and restores their original IDs and state.
+
+The application validates loaded data before replacing the current world. If loading fails, the existing world remains unchanged.
+
+## Error Handling
+
+The application handles invalid or corrupted saved data and database errors.
+
+If loading fails, an error message is added to the application log. The current world is preserved.
+
+## Main Features
+
+- Create and manage different car types.
+- Perform car-specific actions.
+- Organize cars into groups.
+- Add one car to multiple groups.
+- Save and load the world using JSON, XML, or SQL.
+- Restore object identities and relationships.
+- Use repositories and dependency injection.
